@@ -1,5 +1,5 @@
 // cards.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Card } from './cards.entity';
@@ -8,6 +8,8 @@ import { UpdateCardDto } from './dto/update-card.dto';
 
 @Injectable()
 export class CardsService {
+  private readonly logger = new Logger(CardsService.name);
+
   constructor(
     @InjectRepository(Card)
     private cardsRepository: Repository<Card>,
@@ -16,46 +18,55 @@ export class CardsService {
   async create(createCardDto: CreateCardDto): Promise<Card> {
     const card = new Card();
     Object.assign(card, createCardDto);
+    this.logger.log(`Creating card: ${JSON.stringify(card)}`);
     return this.cardsRepository.save(card);
   }
 
   async findAll(type?: string): Promise<Card[]> {
     if (type) {
+      this.logger.log(`Finding cards with type: ${type}`);
       return this.cardsRepository.find({ where: { type } });
     }
+    this.logger.log('Finding all cards');
     return this.cardsRepository.find();
   }
 
   async findOne(id: number): Promise<Card> {
-    return this.cardsRepository.findOne({ where: { id } });
+    this.logger.log(`Finding card with id: ${id}`);
+    const card = await this.cardsRepository.findOne({ where: { id } });
+    if (!card) {
+      throw new NotFoundException(`Card with id ${id} not found`);
+    }
+    return card;
   }
 
   async update(id: number, updateCardDto: UpdateCardDto): Promise<Card> {
-    await this.cardsRepository.update(id, updateCardDto);
-    return this.cardsRepository.findOne({ where: { id } });
+    this.logger.log(`Updating card with id: ${id}`);
+    const card = await this.findOne(id);
+    Object.assign(card, updateCardDto);
+    await this.cardsRepository.save(card);
+    return card;
   }
 
   async remove(id: number): Promise<void> {
-    await this.cardsRepository.delete(id);
+    this.logger.log(`Removing card with id: ${id}`);
+    const result = await this.cardsRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Card with id ${id} not found`);
+    }
   }
 
   async simulateBattle(
     attackerId: number,
     defenderId: number,
   ): Promise<{ winner: Card; damage: number }> {
-    const attacker = await this.cardsRepository.findOne({
-      where: { id: attackerId },
-    });
-    const defender = await this.cardsRepository.findOne({
-      where: { id: defenderId },
-    });
-
-    if (!attacker || !defender) {
-      throw new Error('Invalid card IDs');
-    }
+    this.logger.log(
+      `Simulating battle between attacker ${attackerId} and defender ${defenderId}`,
+    );
+    const attacker = await this.findOne(attackerId);
+    const defender = await this.findOne(defenderId);
 
     let damage = attacker.attack;
-
     if (defender.weakness === attacker.type) {
       damage *= 2;
     } else if (defender.resistance === attacker.type) {
@@ -63,17 +74,16 @@ export class CardsService {
     }
 
     const winner = damage >= defender.hp ? attacker : defender;
-
     return { winner, damage };
   }
+
   async getWeaknessesResistances(
     cardId: number,
   ): Promise<{ weaknesses: Card[]; resistances: Card[] }> {
-    const card = await this.cardsRepository.findOne({ where: { id: cardId } });
-
-    if (!card) {
-      throw new Error('Invalid card ID');
-    }
+    this.logger.log(
+      `Getting weaknesses and resistances for card with id: ${cardId}`,
+    );
+    const card = await this.findOne(cardId);
 
     const weaknesses = await this.cardsRepository.find({
       where: { type: card.weakness },
