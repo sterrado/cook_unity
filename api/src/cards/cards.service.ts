@@ -19,7 +19,10 @@ export class CardsService {
     return this.cardsRepository.save(card);
   }
 
-  async findAll(): Promise<Card[]> {
+  async findAll(type?: string): Promise<Card[]> {
+    if (type) {
+      return this.cardsRepository.find({ where: { type } });
+    }
     return this.cardsRepository.find();
   }
 
