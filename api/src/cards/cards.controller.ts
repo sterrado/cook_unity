@@ -41,5 +41,15 @@ export class CardsController {
     return this.cardsService.remove(id);
   }
 
-  // Implement card battle and weakness/resistance endpoints here
+  @Get(':attackerId/battle/:defenderId')
+  async battle(
+    @Param('attackerId') attackerId: number,
+    @Param('defenderId') defenderId: number,
+  ) {
+    return this.cardsService.simulateBattle(attackerId, defenderId);
+  }
+  @Get(':cardId/weaknesses-resistances')
+  async getWeaknessesResistances(@Param('cardId') cardId: number) {
+    return this.cardsService.getWeaknessesResistances(cardId);
+  }
 }

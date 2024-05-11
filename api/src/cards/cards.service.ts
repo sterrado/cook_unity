@@ -36,5 +36,49 @@ export class CardsService {
     await this.cardsRepository.delete(id);
   }
 
-  // Implement card battle simulation and weakness/resistance logic here
+  async simulateBattle(
+    attackerId: number,
+    defenderId: number,
+  ): Promise<{ winner: Card; damage: number }> {
+    const attacker = await this.cardsRepository.findOne({
+      where: { id: attackerId },
+    });
+    const defender = await this.cardsRepository.findOne({
+      where: { id: defenderId },
+    });
+
+    if (!attacker || !defender) {
+      throw new Error('Invalid card IDs');
+    }
+
+    let damage = attacker.attack;
+
+    if (defender.weakness === attacker.type) {
+      damage *= 2;
+    } else if (defender.resistance === attacker.type) {
+      damage /= 2;
+    }
+
+    const winner = damage >= defender.hp ? attacker : defender;
+
+    return { winner, damage };
+  }
+  async getWeaknessesResistances(
+    cardId: number,
+  ): Promise<{ weaknesses: Card[]; resistances: Card[] }> {
+    const card = await this.cardsRepository.findOne({ where: { id: cardId } });
+
+    if (!card) {
+      throw new Error('Invalid card ID');
+    }
+
+    const weaknesses = await this.cardsRepository.find({
+      where: { type: card.weakness },
+    });
+    const resistances = await this.cardsRepository.find({
+      where: { type: card.resistance },
+    });
+
+    return { weaknesses, resistances };
+  }
 }
