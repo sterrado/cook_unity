@@ -1,36 +1,9 @@
 // pages/Home.tsx
-
 "use client"; // This is a client component 👈🏽
-
 import React, { useState } from "react";
-import styled from "styled-components";
 import Link from "next/link";
-import { fetchCards } from "../services/api";
 import { Card } from "../interfaces/Card";
-
-const Container = styled.div`
-  /* Add your styles for the container */
-`;
-
-const Title = styled.h1`
-  /* Add your styles for the title */
-`;
-
-const SearchBar = styled.input`
-  /* Add your styles for the search bar */
-`;
-
-const TypeFilter = styled.select`
-  /* Add your styles for the type filter */
-`;
-
-const CardList = styled.ul`
-  /* Add your styles for the card list */
-`;
-
-const CardItem = styled.li`
-  /* Add your styles for the card item */
-`;
+import "./Home.css";
 
 interface HomeProps {
   cards: Card[];
@@ -49,51 +22,59 @@ export default function Home({ cards }: HomeProps) {
   };
 
   const filteredCards = cards.filter((card) => {
-    const nameMatch = card.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const nameMatch = card.name.toLowerCase().includes(searchTerm.toLowerCase());
     const typeMatch = selectedType === "" || card.type === selectedType;
     return nameMatch && typeMatch;
   });
 
   return (
-    <Container>
-      <Title>Pokemon Cards</Title>
-      <SearchBar
-        type="text"
-        placeholder="Search by name"
-        value={searchTerm}
-        onChange={handleSearch}
-      />
-      <TypeFilter value={selectedType} onChange={handleTypeFilter}>
-        <option value="">All Types</option>
-        {/* Add options for each unique card type */}
-        <option value="Fire">Fire</option>
-        <option value="Water">Water</option>
-        <option value="Electric">Electric</option>
-        {/* Add more options as needed */}
-      </TypeFilter>
-      <CardList>
+    <div className="container">
+      <h1 className="title">Pokemon Cards</h1>
+      <div className="search-and-filter-container">
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={handleSearch}
+          className="search-bar"
+        />
+        <select
+          value={selectedType}
+          onChange={handleTypeFilter}
+          className="type-filter"
+        >
+          <option value="">All Types</option>
+          <option value="Fire">Fire</option>
+          <option value="Water">Water</option>
+          <option value="Electric">Electric</option>
+          <option value="Grass">Grass</option>
+          <option value="Ghost">Ghost</option>
+          <option value="Psychic">Psychic</option>
+          <option value="Fighting">Fighting</option>
+          <option value="Dragon">Dragon</option>
+          <option value="Normal">Normal</option>
+        </select>
+      </div>
+      <ul className="card-list">
         {filteredCards.map((card) => (
-          <CardItem key={card.id}>
-            <Link href={`/cards/${card.id}`}>{card.name}</Link>
-          </CardItem>
+          <li key={card.id} className="card-item">
+            <Link href={`/cards/${card.id}`}>
+              <div className="card">
+                <div className="card-header">
+                  <h2>{card.name}</h2>
+                  <p>Type: {card.type}</p>
+                </div>
+                <div className="card-body">
+                  <p>HP: {card.hp}</p>
+                  <p>Attack: {card.attack}</p>
+                  <p>Weakness: {card.weakness}</p>
+                  <p>Resistance: {card.resistance}</p>
+                </div>
+              </div>
+            </Link>
+          </li>
         ))}
-      </CardList>
-    </Container>
+      </ul>
+    </div>
   );
-}
-
-export async function getStaticProps() {
-  let cards: Card[] = [];
-  try {
-    cards = await fetchCards();
-  } catch (error) {
-    console.error("Failed to fetch cards:", error);
-  }
-  return {
-    props: {
-      cards,
-    },
-  };
 }

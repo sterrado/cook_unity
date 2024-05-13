@@ -1,54 +1,132 @@
 /* styles/CardPage.css */
 .container {
-    background-color: #f6d365;
+    background-color: #1e1e1e;
     min-height: 100vh;
     padding: 20px;
-    color: #333;
+    color: #fff;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   
   .title {
-    color: #1e212d;
+    color: #ffcc00;
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: center;
   }
   
   .cardDetails {
-    background-color: #f9f9f9;
+    background-color: #2d2d2d;
     border-radius: 10px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    padding: 30px;
     margin: 20px 0;
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
   
-  .button, .battleButton, .weaknessesResistancesButton, .backButton {
-    background-color: #ff9f00;
+  .cardDetails p {
+    margin: 10px 0;
+    font-size: 18px;
+  }
+  
+  .button,
+  .battleButton,
+  .weaknessesResistancesButton,
+  .backButton,
+  .closeButton {
+    background-color: #ffcc00;
     border: none;
-    color: white;
-    padding: 10px 20px;
+    color: #1e1e1e;
+    padding: 12px 24px;
     margin: 10px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
   }
   
-  .button:hover, .battleButton:hover, .weaknessesResistancesButton:hover, .backButton:hover {
-    background-color: #cc7c00;
+  .button:hover,
+  .battleButton:hover,
+  .weaknessesResistancesButton:hover,
+  .backButton:hover,
+  .closeButton:hover {
+    background-color: #ffc000;
   }
   
-  .button:disabled, .battleButton:disabled, .weaknessesResistancesButton:disabled, .backButton:disabled {
-    background-color: #ccc;
+  .button:disabled,
+  .battleButton:disabled,
+  .weaknessesResistancesButton:disabled,
+  .backButton:disabled,
+  .closeButton:disabled {
+    background-color: #666;
     cursor: default;
   }
   
   .responsiveInput {
     width: 100%;
     max-width: 300px;
-    padding: 10px;
+    padding: 12px;
     margin-top: 10px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: none;
+    background-color: #444;
+    color: #fff;
+    font-size: 16px;
   }
   
+  .weaknessesResistances {
+    background-color: #2d2d2d;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .weaknessesResistances h2 {
+    color: #ffcc00;
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .weaknessesResistances ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .weaknessesResistances li {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modalContent {
+    background-color: #2d2d2d;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
